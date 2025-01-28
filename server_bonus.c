@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: husarpka <husarpka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/18 19:45:35 by husarpka          #+#    #+#             */
-/*   Updated: 2025/01/27 19:14:53 by husarpka         ###   ########.fr       */
+/*   Created: 2025/01/27 16:32:03 by husarpka          #+#    #+#             */
+/*   Updated: 2025/01/28 17:54:11 by husarpka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,42 +14,44 @@
 #include <signal.h>
 #include <unistd.h>
 
-void ft_handler(int sig)
+void	ft_handler(int sig, siginfo_t *info, void *value)
 {
-    static int bit = 128;
-    static int c = 0;
-
+    (void)value;
+    static int	res = 128;
+    static int	c = 0;
     if (sig == SIGUSR1)
     {
-        c |= bit;
+        c |= res;
     }
-    bit >>= 1;
-    if (bit == 0)
+    res >>= 1;
+    if (res == 0)
     {
         write(1, &c, 1);
-        bit = 128;
+        if (c == '\0')
+            kill(info->si_pid, SIGUSR1);
+        res = 128;
         c = 0;
     }
+    
 }
-
-int main(void)
+int main()
 {
     struct sigaction sa;
-
-    sa.sa_handler = ft_handler;
+    sa.sa_sigaction = ft_handler;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-
+    sa.sa_flags = SA_SIGINFO;
+    
     sigaction(SIGUSR1, &sa, NULL);
     sigaction(SIGUSR2, &sa, NULL);
-
+    
+    write(1,"pid.. ",6);
     ft_putnbr(getpid());
-    write(1, "\n", 1);
-
-    while (80)
+    write(1,"\n",1);
+    while(80)
     {
         pause();
     }
     
-    return 0;
+    return (0);
+
 }

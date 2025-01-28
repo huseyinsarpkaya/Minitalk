@@ -6,36 +6,18 @@
 /*   By: husarpka <husarpka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 16:44:03 by husarpka          #+#    #+#             */
-/*   Updated: 2025/01/18 21:28:15 by husarpka         ###   ########.fr       */
+/*   Updated: 2025/01/27 19:48:40 by husarpka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 
-void	ft_putchar(char c)
-{
-	write(1, &c, 1);
-}
-
 void	ft_putnbr(int nbr)
 {
-	char	c;
-
-	if (nbr < 0)
-	{
-		write(1, "-", 1);
-		nbr = -nbr;
-	}
-	if (nbr > 9)
-	{
+	if (nbr > 9)	
 		ft_putnbr(nbr / 10);
-		ft_putnbr(nbr % 10);
-	}
-	else
-	{
-		c = nbr + '0';
-		write(1, &c, 1);
-	}
+	nbr = nbr % 10 + 48;
+	write(1,&nbr,1);
 }
 
 int	ft_atoi(char *str)
@@ -63,11 +45,3 @@ int	ft_atoi(char *str)
 	return (result * a);
 }
 
-void	ft_putstr(char *s)
-{
-	while (*s)
-	{
-		write(1, s, 1);
-		s++;
-	}
-}
