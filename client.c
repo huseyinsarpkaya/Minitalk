@@ -6,7 +6,7 @@
 /*   By: husarpka <husarpka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 16:43:27 by husarpka          #+#    #+#             */
-/*   Updated: 2025/01/28 17:14:30 by husarpka         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:53:21 by husarpka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,28 @@
 #include <unistd.h>
 #include <signal.h>
 
-void	ft_hand(int pid, char a)
+volatile int	g_ack = 0;
+
+static void	ft_res(int sig)
+{
+	if (sig == SIGUSR1)
+		g_ack = 1;
+}
+
+static void	ft_hand(int pid, char a)
 {
 	int	bit;
 
 	bit = 8;
 	while (bit--)
 	{
+		g_ack = 0;
 		if (a >> bit & 1)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-		usleep(500);
+		while (!g_ack)
+			pause();
 	}
 }
 
@@ -43,9 +53,10 @@ int	main(int argc, char **argv)
 	pid = ft_atoi(argv[1]);
 	if (pid < 0)
 	{
-		write(1, "pid hatali", 10);
+		write(1, "pid error", 9);
 		return (1);
 	}
+	signal(SIGUSR1, ft_res);
 	while (argv[2][i])
 		ft_hand(pid, argv[2][i++]);
 	return (0);

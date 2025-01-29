@@ -6,7 +6,7 @@
 /*   By: husarpka <husarpka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 16:44:03 by husarpka          #+#    #+#             */
-/*   Updated: 2025/01/27 19:48:40 by husarpka         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:52:46 by husarpka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	ft_putnbr(int nbr)
 {
-	if (nbr > 9)	
+	if (nbr > 9)
 		ft_putnbr(nbr / 10);
 	nbr = nbr % 10 + 48;
-	write(1,&nbr,1);
+	write(1, &nbr, 1);
 }
 
 int	ft_atoi(char *str)
@@ -44,4 +44,3 @@ int	ft_atoi(char *str)
 	}
 	return (result * a);
 }
-

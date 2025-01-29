@@ -6,7 +6,7 @@
 /*   By: husarpka <husarpka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 16:32:03 by husarpka          #+#    #+#             */
-/*   Updated: 2025/01/28 17:54:11 by husarpka         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:56:30 by husarpka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,44 +14,43 @@
 #include <signal.h>
 #include <unistd.h>
 
-void	ft_handler(int sig, siginfo_t *info, void *value)
+static void	ft_handler(int sig, siginfo_t *info, void *value)
 {
-    (void)value;
-    static int	res = 128;
-    static int	c = 0;
-    if (sig == SIGUSR1)
-    {
-        c |= res;
-    }
-    res >>= 1;
-    if (res == 0)
-    {
-        write(1, &c, 1);
-        if (c == '\0')
-            kill(info->si_pid, SIGUSR1);
-        res = 128;
-        c = 0;
-    }
-    
-}
-int main()
-{
-    struct sigaction sa;
-    sa.sa_sigaction = ft_handler;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_SIGINFO;
-    
-    sigaction(SIGUSR1, &sa, NULL);
-    sigaction(SIGUSR2, &sa, NULL);
-    
-    write(1,"pid.. ",6);
-    ft_putnbr(getpid());
-    write(1,"\n",1);
-    while(80)
-    {
-        pause();
-    }
-    
-    return (0);
+	static int	res = 128;
+	static int	c = 0;
 
+	(void)value;
+	if (sig == SIGUSR1)
+	{
+		c |= res;
+	}
+	res >>= 1;
+	if (res == 0)
+	{
+		write(1, &c, 1);
+		if (c == '\0')
+			kill(info->si_pid, SIGUSR1);
+		res = 128;
+		c = 0;
+	}
+	kill(info->si_pid, SIGUSR2);
+}
+
+int	main(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_sigaction = ft_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
+	write(1, "pid.. ", 6);
+	ft_putnbr(getpid());
+	write(1, "\n", 1);
+	while (1)
+	{
+		pause();
+	}
+	return (0);
 }
