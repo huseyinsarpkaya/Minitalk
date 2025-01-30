@@ -6,13 +6,14 @@
 /*   By: husarpka <husarpka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 16:43:27 by husarpka          #+#    #+#             */
-/*   Updated: 2025/01/29 16:53:21 by husarpka         ###   ########.fr       */
+/*   Updated: 2025/01/30 16:06:21 by husarpka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 #include <unistd.h>
 #include <signal.h>
+#include <stdlib.h>
 
 volatile int	g_ack = 0;
 
@@ -31,9 +32,15 @@ static void	ft_hand(int pid, char a)
 	{
 		g_ack = 0;
 		if (a >> bit & 1)
-			kill(pid, SIGUSR1);
+		{
+			if (kill(pid, SIGUSR1) == -1)
+				exit(1);
+		}
 		else
-			kill(pid, SIGUSR2);
+		{
+			if (kill(pid, SIGUSR2) == -1)
+				exit(1);
+		}
 		while (!g_ack)
 			pause();
 	}
